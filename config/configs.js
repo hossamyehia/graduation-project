@@ -10,5 +10,5 @@ const MONGOURI = `mongodb+srv://${username}:${password}@${clusterUrl}/${DB}?retr
 
 module.exports = {
     'secretKey': process.env.SECRETKEY,
-    'mongoUri' : DBSTRING,
+    'mongoUri' : MONGOURI,
 }
