@@ -1,5 +1,5 @@
 const product = require('../models/product');
-const {Product} = require('../models/product');
+const { Product } = require('../models/product');
 
 /**
  * Add New Products To Data
@@ -10,10 +10,22 @@ const {Product} = require('../models/product');
 const add = (products) => {
     return new Promise((resolve, reject) => {
 
-        Product.insertMany(products, {ordered: false}).then((Data) => {
+        Product.insertMany(products, { ordered: false }).then((Data) => {
             resolve(Data);
         }).catch(err => reject(err));
-        
+
+    });
+}
+
+/**
+ * products
+ * @returns ALL Product
+ */
+const getAll = () => {
+    return new Promise((resolve, reject) => {
+        Product.find({}).then((Data) => {
+            resolve(Data);
+        }).catch(err => reject(err));
     });
 }
 
@@ -26,26 +38,39 @@ const add = (products) => {
 const getById = (id) => {
     return new Promise((resolve, reject) => {
 
-        Product.findOne({_id: id}).then((Data) => {
+        Product.findOne({ _id: id }).then((Data) => {
             resolve(Data);
         }).catch(err => reject(err));
-        
+
     });
 }
-
 
 /**
  * Find Product By Barcode
  * @param {String} barcode Product barcode
  * @returns Product Data || Error Object
  */
- const getByBarcode = (barcode) => {
+const getByBarcode = (barcode) => {
     return new Promise((resolve, reject) => {
 
-        Product.findOne({barcode: barcode}).then((Data) => {
+        Product.findOne({ barcode: barcode }).then((Data) => {
             resolve(Data);
         }).catch(err => reject(err));
-        
+
+    });
+}
+
+/**
+ * Find Product
+ * 
+ * @param {Object} info 
+ * @returns Product Data || Error Object
+ */
+const get = (info) => {
+    return new Promise((resolve, reject) => {
+        Product.findOne(info).then((Data) => {
+            resolve(Data);
+        }).catch(err => reject(err));
     });
 }
 
@@ -58,10 +83,10 @@ const getById = (id) => {
 const updateById = (id, data) => {
     return new Promise((resolve, reject) => {
 
-        Product.updateOne({_id: id},{ $set: data }).then((Data) => {
+        Product.updateOne({ _id: id }, { $set: data }).then((Data) => {
             resolve(Data);
         }).catch(err => reject(err));
-        
+
     });
 }
 
@@ -74,10 +99,10 @@ const updateById = (id, data) => {
 const updateByBarcode = (barcode, data) => {
     return new Promise((resolve, reject) => {
 
-        Product.updateOne({barcode: barcode},{ $set: data }).then((Data) => {
+        Product.updateOne({ barcode: barcode }, { $set: data }).then((Data) => {
             resolve(Data);
         }).catch(err => reject(err));
-        
+
     });
 }
 
@@ -90,12 +115,12 @@ const updateByBarcode = (barcode, data) => {
 const updateQuantity = (id, value) => {
     return new Promise((resolve, reject) => {
 
-        Product.updateOne({_id: id,quantity: {$gt: 0}},{ $inc: {quantity: value} }).then((res) => {
+        Product.updateOne({ _id: id, quantity: { $gt: 0 } }, { $inc: { quantity: value } }).then((res) => {
             resolve(res);
         }).catch(err => {
             reject(err);
         });
-        
+
     });
 }
 
@@ -107,10 +132,10 @@ const updateQuantity = (id, value) => {
 const removeById = (id) => {
     return new Promise((resolve, reject) => {
 
-        Product.deleteOne({_id: id}).then((Data) => {
+        Product.deleteOne({ _id: id }).then((Data) => {
             resolve(Data);
         }).catch(err => reject(err));
-        
+
     });
 }
 
@@ -123,10 +148,10 @@ const removeById = (id) => {
 const removeByBarcode = (barcode) => {
     return new Promise((resolve, reject) => {
 
-        Product.deleteOne({barcode: barcode}).then((Data) => {
+        Product.deleteOne({ barcode: barcode }).then((Data) => {
             resolve(Data);
         }).catch(err => reject(err));
-        
+
     });
 }
 
@@ -135,8 +160,10 @@ const removeByBarcode = (barcode) => {
 
 module.exports = {
     add,
+    getAll,
     getById,
     getByBarcode,
+    get,
     updateById,
     updateByBarcode,
     updateQuantity,

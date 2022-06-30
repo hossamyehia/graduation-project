@@ -35,7 +35,7 @@ app.use('/cashier', cashierRouter);
 app.use('/gateway', gatewayRouter);
 app.use('/cart',cartRouter);
 app.use('/vcart',vCartRouter);
-app.use('/product',productRouter);
+app.use('/products',productRouter);
 app.use('/user', userRouter);
 
 
