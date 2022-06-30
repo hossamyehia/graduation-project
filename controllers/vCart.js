@@ -2,7 +2,7 @@ const productService = require('../services/product');
 const vCartService = require('../services/vCart');
 const cartService = require('../services/cart');
 const payGateService = require('../services/payGate');
-const { response } = require('express');
+const error = require("../services/errors");
 
 /**
  * It hanldes virtual cart creation API
@@ -18,8 +18,8 @@ const create = (req, res, next) => {
     cartService.update(cart_id, {status: true}).then(cart => {
         vCartService.create(cart_id).then( (vCart) => {
             res.status(200).setHeader('Content-Type', 'application/json').json({success: true, status: 'Cart Created Successful!', Cart: vCart})
-        }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
-    }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
+        }).catch(err => error(res, 500, err));
+    }).catch(err => error(res, 500, err));
    
 }
 
@@ -34,7 +34,7 @@ const select = (req, res, next) => {
 
     vCartService.getById(cart_id).then(vCart => {
         res.status(200).setHeader('Content-Type', 'application/json').json({success: true, Cart: vCart})    
-    }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
+    }).catch(err => error(res, 500, err));
 }
 
 /**
@@ -54,7 +54,6 @@ const addProduct = (req, res, next) => {
         }else{
             productService.updateQuantity(product._id, -1).then( (response) => {
                 
-                
                 product.quantity = 1;
                 let prod = req.vcart.products.find( ({ _id }) => {
                     return _id.toString() === product.id
@@ -64,19 +63,18 @@ const addProduct = (req, res, next) => {
 
                     vCartService.updateQuantity(cart_id, prod, 1).then((response) => {
                         res.status(200).setHeader('Content-Type', 'application/json').json({success: true, product: product});
-                    }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
+                    }).catch(err => error(res, 500, err) );
 
                 }else{
 
                     vCartService.addProduct(cart_id, product).then( (response) => {
                         res.status(200).setHeader('Content-Type', 'application/json').json({success: true, product: product});
-                    }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
+                    }).catch(err => error(res, 500, err) );
                 }   
-            }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
+            }).catch(err => error(res, 500, err) );
         }
-    }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
-    
-   
+    }).catch(err => error(res, 500, err) );
+
 }
 
 /**
@@ -92,7 +90,7 @@ const getProducts = (req, res, next) => {
 
     vCartService.getById(cart_id).then(vCart => {
         res.status(200).setHeader('Content-Type', 'application/json').json({success: true, Products: vCart.products})    
-    }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
+    }).catch(err => error(res, 500, err) );
    
 }
 
@@ -121,10 +119,10 @@ const updateQuantity = (req, res, next) => {
     
                     res.status(200).setHeader('Content-Type', 'application/json').json({success: true, status: "Update Done!"});
         
-                }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({success: false,err: err}));
+                }).catch(err => error(res, 500, err) );
             }
     
-        }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({success: false,err: err}));
+        }).catch(err => error(res, 500, err) );
     }
 
     
@@ -151,10 +149,10 @@ const removeProduct = (req, res, next) => {
              
                 res.status(200).setHeader('Content-Type', 'application/json').json({success: true, status: "Removed!"});
     
-            }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({success: false,err: err}));
+            }).catch(err => error(res, 500, err) );
             
     
-        }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({success: false,err: err}));
+        }).catch(err => error(res, 500, err) );
     }
 }
 
@@ -172,25 +170,46 @@ const changeWeight = (req, res, next) => {
          
         res.status(200).setHeader('Content-Type', 'application/json').json({success: true, status: "Done!"});
 
-    }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({success: false,err: err}));
+    }).catch(err => error(res, 500, err) );
 
 }
 
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 const checkOut = (req, res, next) => {
     let cart_id = req.query.id;
     let vCart = req.vcart;
     delete vCart.products;
+    vCart.cart_name = null;
 
     payGateService.getShortPath().then( (gateway) => {
-        payGateService.addQueue(gateway.number,vCart).then(response => {
+        cartService.get(vCart.cart_id).then( cart => {
+            
+            let name = cart["name"];
+            vCart["cart_name"] = name;
+            
             vCartService.close(cart_id,gateway.number).then(response => {
-                res.status(200).setHeader('Content-Type', 'application/json').json({success: true, gatewayNumber : gateway.number})
-            }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
-        }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
-    }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
+
+                cartService.update(cart._id,{status: false}).then(response => {
+
+                    payGateService.addQueue(gateway.number,vCart).then(response => {
+
+                        res.status(200).setHeader('Content-Type', 'application/json').json({success: true, gatewayNumber : gateway.number});
+
+                    }).catch(err => error(res, 500, err) );
+
+                }).catch(err => error(res, 500, err) );
+
+            }).catch(err => error(res, 500, err) );
+            
+        }).catch(err => error(res, 500, err) );
+    }).catch(err => error(res, 500, err));
 
 }
-
 
 module.exports = {
     create,

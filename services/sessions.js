@@ -74,7 +74,7 @@ const add = (gateway_id,cashier_id) => {
  * @param {String} gateway_id 
  * @param {String} cashier_id 
  */
-const close = (gateway_id,cashier_id) => {
+const close = (gateway_id, cashier_id) => {
     return new Promise((resolve, reject) => {
         let date = new Date().toString()
         Session.updateOne({gateway_id: gateway_id, cashier_id: cashier_id, ended: false},{ $set: { end_date : date, ended: true} }).then( session =>{
@@ -82,7 +82,7 @@ const close = (gateway_id,cashier_id) => {
                 clearTimeout(openSessions[session._id]);
                 delete openSessions[session._id];
             }
-            resolve();
+            resolve("done");
         }).catch(err => reject(err));
     });
 }

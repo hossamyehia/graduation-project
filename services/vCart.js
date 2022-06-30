@@ -47,6 +47,20 @@ const getAll = () => {
 }
 
 /**
+ * Get All Virtual Cart for Specific User
+ * @param {String} user_id 
+ * @returns Cart Data || Error Object
+ */
+const getForUser = (user_id) => {
+    return new Promise((resolve, reject) => {
+        vCarts.find({user_id: user_id}).sort({closed: 1}).then((carts) => {
+            console.log(carts)
+            resolve(carts);
+        }).catch(err => reject(err));
+    });
+}
+
+/**
  * Get All Virtual Cart for Specific Gateway
  * 
  * @param {Number} gateway_number 
@@ -103,7 +117,7 @@ const getForGate = (gateway_number) => {
 const validate = (vCartId) => {
     return new Promise((resolve, reject) => {
 
-        vCarts.findOne({_id: vCartId},{gateway_number:0,cart_id:0,createdat:0,updatedat:0,__v:0,"products.image":0,"products.__v":0,"products.barcode":0,"products.name":0}).then((cart) => {
+        vCarts.findOne({_id: vCartId},{gateway_number:0,createdate:0,updatedate:0,__v:0,"products.image":0,"products.__v":0,"products.barcode":0,"products.name":0}).then((cart) => {
             resolve(cart);
         }).catch(err => reject(err));
         
@@ -122,6 +136,7 @@ const addProduct = (v_cart_id, product) =>{
         }).catch(err => reject(err));
     });
 }
+
 
 /**
  * Update Virtual Cart`s Products Quantity
@@ -178,6 +193,26 @@ const changeWeight = (id, value) =>{
 }
 
 
+/**
+ * Adding Owner of the cart
+ * @param {String} id 
+ * @returns 
+ */
+const setUser = (id, user_id) => {
+    return new Promise((resolve, reject) => {
+        vCarts.findOne({_id: id}).then( cart => {
+            if(cart){
+                cart.user_id = user_id;
+
+                cart.save().then( user => {
+                    resolve(cart);
+                }).catch(err => reject(err));
+            }else{
+                resolve(null);
+            }
+        }).catch(err => reject(err));
+    });
+}
 
 
 /**
@@ -202,12 +237,14 @@ module.exports = {
     validate,
     getAll,
     getActive,
+    getForUser,
     getForGate,
     getActiveForGate,
     addProduct,
     updateQuantity,
     removeProduct,
     changeWeight,
+    setUser,
     close
 }
 

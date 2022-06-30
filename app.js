@@ -18,6 +18,7 @@ let gatewayRouter = require('./routes/payGate');
 let vCartRouter = require('./routes/vCart');
 let cartRouter = require('./routes/cart');
 let productRouter = require('./routes/product');
+let userRouter = require('./routes/user');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use('/gateway', gatewayRouter);
 app.use('/cart',cartRouter);
 app.use('/vcart',vCartRouter);
 app.use('/product',productRouter);
+app.use('/user', userRouter);
 
 
 module.exports = app;

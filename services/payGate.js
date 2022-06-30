@@ -58,8 +58,8 @@ const getByNumber = (number) => {
 const update = (id, data) => {
     return new Promise((resolve, reject) => {
 
-        PaymentGateway.updateOne({_id: id},{ $set: data }).then( (gateway) => {
-            resolve(gateway);
+        PaymentGateway.updateOne({_id: id},{ $set: data }).then( (status) => {
+            resolve(status);
         }).catch(err => reject(err));
         
     });
@@ -88,8 +88,8 @@ const getShortPath = () => {
 const addQueue = (id, vCart) => {
     return new Promise((resolve, reject) => {
 
-        PaymentGateway.updateOne({id: id},{ $inc: {queue_length: 1, number_of_products: vCart.numberOfProduct}, $push: {queue: vCart} }).then( (gateway) => {
-            resolve(gateway);
+        PaymentGateway.updateOne({id: id},{ $inc: {queue_length: 1, number_of_products: vCart.numberOfProduct}, $push: {queue: vCart} }).then( (status) => {
+            resolve(status);
         }).catch(err => reject(err));
         
     });
@@ -104,8 +104,11 @@ const addQueue = (id, vCart) => {
 const popQueue = (id, vCart) => {
     return new Promise((resolve, reject) => {
 
-        PaymentGateway.updateOne({_id: id, queue: { $elemMatch: { _id: vCart._id } } },{ $inc: {queue_length: -1, number_of_products: -1 * vCart.numberOfProduct, daily_balance: vCart.totalPrice}, $pull: {queue: {_id: vCart._id}} }).then( (res) => {
-            resolve(res);
+        PaymentGateway.updateOne({_id: id, queue: { $elemMatch: { _id: vCart._id } } },
+                { $inc: {queue_length: -1, number_of_products: -1 * vCart.numberOfProduct, daily_balance: vCart.totalPrice},
+                $pull: {queue: {_id: vCart._id}} }).then( (status) => {
+                    
+            resolve(status);
         }).catch(err => reject(err));
         
     });

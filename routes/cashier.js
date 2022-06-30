@@ -9,9 +9,9 @@ const usersController = require('../controllers/cashier');
 router.post('/register', usersController.signup);
 
 // login
-router.post('/login', passport.authenticate('local'), usersController.login)
+router.post('/login', passport.authenticate('local-Cashier'), usersController.login)
 
 // logout
-router.post('/logout', authenticate.verifyUser, usersController.logout);
+router.post('/logout', authenticate.verifyCashier, usersController.logout);
 
 module.exports = router;

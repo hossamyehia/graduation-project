@@ -18,6 +18,24 @@ const add = (name)=> {
 }
 
 /**
+ * Get Cart Data
+ * @param {String} id Cart ID
+ * @param {Object} data New Data
+ * @returns Promise "Updated Cart" || "Error"
+ */
+ const get = (id) => {
+    return new Promise((resolve, reject) => {
+
+        Cart.findOne({_id: id}).then((cart) => {
+            resolve(cart);
+        }).catch(err => {
+            reject(err);
+        });
+        
+    });
+}
+
+/**
  * Update Cart Data
  * @param {String} id Cart ID
  * @param {Object} data New Data
@@ -54,6 +72,7 @@ const remove = (id) => {
 
 module.exports = {
     add,
+    get,
     update,
     remove,
 }

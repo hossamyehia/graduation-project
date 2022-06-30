@@ -2,8 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const queueSchema = new Schema({
-    vCart_id: {
+    _id: {
         type: mongoose.ObjectId,
+        required: true
+    },
+    cart_id:{
+        type: String,
+        required: true
+    },
+    cart_name:{
+        type: String,
         required: true
     },
     actual_weight: {
