@@ -7,14 +7,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hossamyehia/Graduation-Project.git"
+    "url": "git+https://github.com/hossamyehia/graduation-project.git"
   },
   "author": "Hossam Yahia",
-  "license": "GPL",
+  "license": "The Unlicense",
   "bugs": {
-    "url": "https://github.com/hossamyehia/Graduation-Project/issues"
+    "url": "https://github.com/hossamyehia/graduation-project/issues"
   },
-  "homepage": "https://github.com/hossamyehia/Graduation-Project#readme",
+  "homepage": "https://github.com/hossamyehia/graduation-project#readme",
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
