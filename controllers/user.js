@@ -52,7 +52,7 @@ const addCart = (req, res, next) => {
         if(cart){
             res.status(200).setHeader('Content-Type', 'application/json').json({success: true, cart: cart});
         }else{
-            res.status(404).setHeader('Content-Type', 'application/json').json({success: false, status: "Cart Not Found"});
+            res.status(404).setHeader('Content-Type', 'application/json').json({success: false, status: "Cart not available"});
         }
     }).catch(err => error(res, 500, err));
 }

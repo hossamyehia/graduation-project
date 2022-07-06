@@ -54,7 +54,6 @@ const getAll = () => {
 const getForUser = (user_id) => {
     return new Promise((resolve, reject) => {
         vCarts.find({user_id: user_id}).sort({closed: 1}).then((carts) => {
-            console.log(carts)
             resolve(carts);
         }).catch(err => reject(err));
     });
@@ -202,6 +201,9 @@ const setUser = (id, user_id) => {
     return new Promise((resolve, reject) => {
         vCarts.findOne({_id: id}).then( cart => {
             if(cart){
+                if(cart.user_id != "000000000000000000000000")
+                    resolve(null);
+
                 cart.user_id = user_id;
 
                 cart.save().then( user => {
