@@ -7,6 +7,10 @@ const virtualCartSchema = new Schema({
         type: mongoose.ObjectId,
         required: true
     },
+    cart_name:{
+        type: String,
+        default: "Payment Gate"
+    },
     user_id:{
         type: mongoose.ObjectId,
         default: "000000000000000000000000"

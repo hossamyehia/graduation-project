@@ -14,9 +14,10 @@ const error = require("../services/errors");
 const create = (req, res, next) => {
 
     let cart_id = req.body.cart_id;
+    let cart_name = req.cart.name ? req.cart.name : "Payment Gate";
     
     cartService.update(cart_id, {status: true}).then(cart => {
-        vCartService.create(cart_id).then( (vCart) => {
+        vCartService.create(cart_id, cart_name).then( (vCart) => {
             res.status(200).setHeader('Content-Type', 'application/json').json({success: true, status: 'Cart Created Successful!', Cart: vCart})
         }).catch(err => error(res, 500, err));
     }).catch(err => error(res, 500, err));
@@ -184,29 +185,23 @@ const checkOut = (req, res, next) => {
     let cart_id = req.query.id;
     let vCart = req.vcart;
     delete vCart.products;
-    vCart.cart_name = null;
 
     payGateService.getShortPath().then( (gateway) => {
-        cartService.get(vCart.cart_id).then( cart => {
             
-            let name = cart["name"];
-            vCart["cart_name"] = name;
-            
-            vCartService.close(cart_id,gateway.number).then(response => {
+        vCartService.close(cart_id,gateway.number).then(response => {
 
-                cartService.update(cart._id,{status: false}).then(response => {
+            cartService.update(vCart.cart_id,{status: false}).then(response => {
 
-                    payGateService.addQueue(gateway.number,vCart).then(response => {
+                payGateService.addQueue(gateway.number,vCart).then(response => {
 
-                        res.status(200).setHeader('Content-Type', 'application/json').json({success: true, gatewayNumber : gateway.number});
-
-                    }).catch(err => error(res, 500, err) );
+                    res.status(200).setHeader('Content-Type', 'application/json').json({success: true, gatewayNumber : gateway.number});
 
                 }).catch(err => error(res, 500, err) );
 
             }).catch(err => error(res, 500, err) );
-            
+
         }).catch(err => error(res, 500, err) );
+            
     }).catch(err => error(res, 500, err));
 
 }

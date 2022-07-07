@@ -6,10 +6,10 @@ const vCarts = require('../models/virtualCart');
  * @param {String} cart_id 
  * @returns Cart Data || Error Object
  */
-const create = (cart_id) => {
+const create = (cart_id, cart_name) => {
     return new Promise((resolve, reject) => {
 
-        vCarts.insertMany({ cart_id: cart_id}).then((cart) => {
+        vCarts.insertMany({ cart_id: cart_id, cart_name: cart_name}).then((cart) => {
             resolve(cart);
         }).catch(err => reject(err));
         
@@ -225,8 +225,10 @@ const setUser = (id, user_id) => {
 const close = (id, number) => {
     return new Promise((resolve, reject) => {
 
-        vCarts.updateOne({_id: id},{ $set: {gateway_number: number, closed: true} }).then((res) => {
-            resolve(res);
+        console.log(id);
+        vCarts.updateOne({_id: id},{ $set: {gateway_number: number, closed: true} }).then((status) => {
+            console.log(status)
+            resolve(status);
         }).catch(err => reject(err));
         
     });
