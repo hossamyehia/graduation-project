@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const cartSchema = new Schema({
     name:{
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     status: {
         type: Boolean,

@@ -1,5 +1,7 @@
 const payGateService = require('../services/payGate');
 const vCartService = require('../services/vCart');
+const cartService = require('../services/cart');
+const cart = require('../models/cart');
 
 /**
  * Check if the given id is gate id
@@ -20,6 +22,31 @@ const vCartService = require('../services/vCart');
 
 /**
  * Check if the given id is Cart id
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+const isCartOrPaygate = (req, res, next) => {
+    let id = req.body.cart_id;
+    cartService.get(id).then((cart)=>{
+        if(cart){
+            req.cart = cart;
+            next();
+        }else{
+            payGateService.getById(id).then( (gateway) => {
+                if(gateway){
+                    next();
+                }else{
+                    res.status(404).setHeader('Content-Type', 'application/json').json({status: "Couldn`t find Cart or Payment Gate with This ID"});
+                }
+            }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
+        }
+    }).catch(err => res.status(500).setHeader('Content-Type', 'application/json').json({err: err}));
+
+}
+
+/**
+ * Check if the given id is Virtual Cart id
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
@@ -67,6 +94,7 @@ const isOpen = (req, res, next) => {
 module.exports = {
     isPaymentGate,
     isVirtualCart,
+    isCartOrPaygate,
     isOpen,
     isClosed
 }

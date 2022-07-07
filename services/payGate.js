@@ -71,7 +71,7 @@ const update = (id, data) => {
  */
 const getShortPath = () => {
     return new Promise((resolve, reject) => {
-        paymentGateway.aggregate([{ $project: { number: "$id", queue: "$queue_length", product: "$number_of_products" } },{$sort: {queue: 1,product:1}},{ $limit: 1 }]).then( (gateway) => {
+        paymentGateway.aggregate([{ $project: { number: "$id", queue: "$queue_length", product: "$number_of_products" } },{$sort: {status: 1, queue: 1,product:1}},{ $limit: 1 }]).then( (gateway) => {
             resolve(gateway[0]);
         }).catch(err => reject(err));
         

@@ -7,7 +7,7 @@ const validate = require('../controllers/validate');
 
 router.route('/')
 // create cart
-.post(vCartController.create)
+.post(validate.isCartOrPaygate, vCartController.create)
 // Select Cart
 .get(validate.isVirtualCart, vCartController.select);
 

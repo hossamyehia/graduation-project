@@ -12,7 +12,7 @@ router.post('/addgateway', authenticate.verifyCashier,gatewayController.add);
 router.get('/refreshqueue', authenticate.verifyCashier, validate.isPaymentGate, gatewayController.refreshQueue);
 
 
-router.put('/checkout', authenticate.verifyCashier, validate.isVirtualCart, validate.isClosed,gatewayController.checkOut)
+router.put('/checkout', authenticate.verifyCashier, validate.isVirtualCart, validate.isClosed, gatewayController.checkOut)
 
 
 module.exports = router;
